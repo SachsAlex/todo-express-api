@@ -3,7 +3,7 @@ const { StatusCodes, ReasonPhrases } = require("http-status-codes");
 
 const TodosRouter = Router();
 
-const todos = [
+let todos = [
   {
     id: 1,
     userId: 1,
@@ -93,7 +93,26 @@ TodosRouter.put("/mark", (req, res) => {
 });
 
 TodosRouter.put("/update", (req, res) => {
-  res.status(StatusCodes.OK).send("Todo aktuallisieren");
+  const { todoId, newTask, newIsDone, newDueDate } = req.body;
+
+  const todo = todos.find((todo) => todo.id == todoId);
+
+  // wir überschreiben bestimmte Werte des Todos
+  todo.task = newTask;
+  todo.isDone = newIsDone;
+  todo.dueDate = new Date(newDueDate);
+
+  // // Todo rauslöschen
+  // const newTodos = todos.filter((todo) => todo.id != todoId);
+
+  // // Geupdatete Todo wieder hinzufügen
+  // newTodos.push(todo);
+
+  // todos = newTodos;
+
+  console.log(todos);
+
+  res.status(StatusCodes.OK).json({ updatedTodo: todo });
 });
 
 // POST REQUESTS
@@ -104,7 +123,7 @@ TodosRouter.post("/create", (req, res) => {
 
 // DELETE REQUEST
 TodosRouter.delete("/delete", (req, res) => {
-  const { todoId } = req.body;
+  const { todoId } = req.body; //req.body.todoId
 
   console.log("MY BODY", req.body);
   const newTodosArray = todos.filter((item) => item.id != todoId);
